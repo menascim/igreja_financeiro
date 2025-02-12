@@ -1,8 +1,10 @@
+import sys
 import os
 from pathlib import Path
 import dj_database_url
 
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.append(os.path.join(BASE_DIR, 'src'))
 
 SECRET_KEY = os.getenv('SECRET_KEY', 'secret-dev')  # Altere em produção!
 DEBUG = os.getenv('DEBUG', 'False') == 'True'
