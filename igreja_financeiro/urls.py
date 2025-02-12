@@ -1,9 +1,7 @@
-# core/urls.py
-from django.urls import path
-from . import views
+from django.contrib import admin
+from django.urls import path, include  # Adicione 'include'
 
 urlpatterns = [
-    path('', views.profile, name='profile'),
-    path('login/', views.login_view, name='login'),
-    path('export/', views.export_contributions, name='export'),
+    path('admin/', admin.site.urls),
+    path('', include('core.urls')),  # Inclua as URLs do app "core"
 ]
