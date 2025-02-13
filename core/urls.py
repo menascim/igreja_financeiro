@@ -13,7 +13,6 @@ urlpatterns = [
     path('exportar/', views.export_contributions, name='export'),
     path('accounts/logout/', LogoutView.as_view(), name='logout'),
     path('profile/', ProfileView.as_view(), name='profile'),
-    path('export-contrib/', export_contributions, name='export_contributions'),
 ]
 
 
