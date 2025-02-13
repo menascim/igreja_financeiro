@@ -9,8 +9,6 @@ class CustomUserAdmin(UserAdmin):
         ('Informações Pessoais', {'fields': ('phone', 'email')}),
         ('Permissões', {'fields': ('is_active', 'is_staff', 'is_superuser')}),
     )
-class ContributionAdmin(admin.ModelAdmin):
-    list_display = ('user', 'valor', 'data')
 
 admin.site.register(CustomUser, CustomUserAdmin)
-admin.site.register(Contribution, ContributionAdmin)
+
