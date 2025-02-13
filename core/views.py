@@ -1,7 +1,3 @@
-from django.contrib.auth.models import Group, Permission
-from django.contrib.contenttypes.models import ContentType
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.generic import TemplateView
 from django.shortcuts import render, redirect
 from .forms import RegistrationForm
 from django.contrib.auth import login, authenticate
@@ -13,28 +9,12 @@ import pandas as pd
 from twilio.rest import Client
 import os
 
-class ProfileView(LoginRequiredMixin, TemplateView):
-    template_name = 'profile.html'
-
-def cadastro(request):
-    if request.method == "POST":
-        # ... lógica de criação do usuário ...
-        user = User.objects.create_user(...)
-        
-        # Adicione o usuário a um grupo com permissões
-        grupo_contribuidores, _ = Group.objects.get_or_create(name='Contribuidores')
-        permissao_add = Permission.objects.get(codename='add_contribution')
-        grupo_contribuidores.permissions.add(permissao_add)
-        user.groups.add(grupo_contribuidores)
-        
-        return redirect('login')
-    
 def register(request):
     if request.method == 'POST':
         form = RegistrationForm(request.POST)
         if form.is_valid():
             user = form.save()
-            login(request, user)
+            # Redireciona para a página de login após o cadastro
             return redirect('login')
     else:
         form = RegistrationForm()
@@ -48,6 +28,7 @@ def login_view(request):
             password = form.cleaned_data['password']
             user = authenticate(request, username=username, password=password)
             if user:
+                login(request, user)
                 return redirect('profile')
     else:
         form = LoginForm()
