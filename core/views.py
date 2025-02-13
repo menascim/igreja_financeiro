@@ -72,4 +72,14 @@ def profile(request):
     return render(request, 'profile.html', {
         'contributions': contributions,
         'form': form
+        
+@login_required
+def export_contributions(request):
+    contributions = Contribution.objects.filter(user=request.user)
+    df = pd.DataFrame(list(contributions.values('amount', 'date', 'payment_method')))
+    response = HttpResponse(content_type='application/ms-excel')
+    response['Content-Disposition'] = 'attachment; filename="contribuicoes.xlsx"'
+    df.to_excel(response, index=False)
+    return response
+            
     })
