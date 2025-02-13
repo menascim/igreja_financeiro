@@ -1,3 +1,5 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.generic import TemplateView
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.db import IntegrityError
@@ -8,6 +10,14 @@ from .models import Contribution
 import pandas as pd
 from twilio.rest import Client
 import os
+
+class ProfileView(LoginRequiredMixin, TemplateView):
+    template_name = 'profile.html'  # Nome do template do perfil
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['contributions'] = Contribution.objects.filter(user=self.request.user)
+        return context
 
 def register(request):
     if request.method == 'POST':
