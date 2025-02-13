@@ -14,7 +14,6 @@ def register(request):
         form = RegistrationForm(request.POST)
         if form.is_valid():
             user = form.save()
-            # Redireciona para a página de login após o cadastro
             return redirect('login')
     else:
         form = RegistrationForm()
