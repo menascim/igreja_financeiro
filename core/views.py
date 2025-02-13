@@ -10,10 +10,6 @@ from .forms import LoginForm, ContributionForm
 import pandas as pd
 from twilio.rest import Client
 import os
-from django.http import HttpResponse
-
-def health_check(request):
-    return HttpResponse(status=200)
 
 class ProfileView(LoginRequiredMixin, TemplateView):
     template_name = 'profile.html'
