@@ -69,7 +69,6 @@ AUTH_USER_MODEL = 'core.CustomUser'  # Modelo de usuário personalizado
 
 # Configurações de login
 LOGIN_URL = '/login/'
-LOGIN_REDIRECT_URL = '/'
 LOGIN_REDIRECT_URL = 'profile'
 LOGOUT_REDIRECT_URL = 'login'
 
