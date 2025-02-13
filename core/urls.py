@@ -2,6 +2,7 @@ from django.urls import path
 from . import views
 from django.contrib.auth.views import LoginView, LogoutView
 from .views import ProfileView
+from .views import ProfileView, add_contribution
 
 
 urlpatterns = [
@@ -13,6 +14,7 @@ urlpatterns = [
     path('exportar/', views.export_contributions, name='export'),
     path('accounts/logout/', LogoutView.as_view(), name='logout'),
     path('profile/', ProfileView.as_view(), name='profile'),
+    path('contributions/add/', add_contribution, name='add_contribution'),
 ]
 
 
