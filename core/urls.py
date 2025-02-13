@@ -1,6 +1,7 @@
 from django.urls import path
 from . import views
 from django.contrib.auth.views import LoginView, LogoutView
+from .views import ProfileView
 
 urlpatterns = [
     path('perfil/', views.profile, name='profile'),
@@ -10,6 +11,7 @@ urlpatterns = [
     path('logout/', LogoutView.as_view(), name='logout'),
     path('exportar/', views.export_contributions, name='export'),
     path('accounts/logout/', LogoutView.as_view(), name='logout'),
+    path('profile/', ProfileView.as_view(), name='profile'),
 ]
 
 
