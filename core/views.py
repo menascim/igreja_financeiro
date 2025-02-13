@@ -1,3 +1,4 @@
+from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import TemplateView
 from django.shortcuts import render, redirect
@@ -75,9 +76,12 @@ def add_contribution(request):
         form = ContributionForm(request.POST)
         if form.is_valid():
             contribution = form.save(commit=False)
-            contribution.user = request.user  # Associa ao usuário logado
+            contribution.user = request.user
             contribution.save()
-    return redirect('profile')  # Volta para o perfil após salvar
+            messages.success(request, "Contribuição salva com sucesso!")
+        else:
+            messages.error(request, "Erro no formulário. Verifique os campos.")
+    return redirect('profile')
 
 @login_required
 def export_contributions(request):
