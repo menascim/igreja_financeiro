@@ -13,10 +13,6 @@
             {% csrf_token %}
             {{ form.as_p }}
             <button type="submit" class="btn btn-success">Salvar</button>
-        <form action="{% url 'logout' %}" method="post">
-  {% csrf_token %}
-  <button type="submit">Logout</button>   
-        </form>
     </div>
 
     <div class="mt-5">
