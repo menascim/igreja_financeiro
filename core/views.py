@@ -24,6 +24,13 @@ def register(request):
         form = RegistrationForm()
     return render(request, 'registration/register.html', {'form': form})
 
+def register(request):
+    if request.method == 'POST':
+        form = RegistrationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            return redirect('profile')
+
 def login_view(request):
     if request.method == 'POST':
         form = LoginForm(request, data=request.POST)
