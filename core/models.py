@@ -15,11 +15,6 @@ class Contribution(models.Model):
         ('Cartão', 'Cartão de Crédito/Débito'),
         ('Dinheiro', 'Dinheiro'),
         
-class Contribution(models.Model):
-    user = models.ForeignKey(
-        get_user_model(),
-        on_delete=models.CASCADE,
-        related_name='contributions'
     )
     valor = models.DecimalField(max_digits=10, decimal_places=2)
     data = models.DateTimeField(auto_now_add=True)
