@@ -56,10 +56,7 @@ WSGI_APPLICATION = 'igreja_financeiro.wsgi.application'
 
 # Banco de dados (usando PostgreSQL no Render.com)
 DATABASES = {
-    'default': dj_database_url.config(
-        default=os.getenv('DATABASE_URL', 'postgresql://piber_user:pux332FGmio65ysWqKDJFjZcZQjaFe8S@dpg-cumddd5umphs738hbiog-a.oregon-postgres.render.com/piber'),
-        conn_max_age=600
-    )
+    'default': dj_database_url.config(default='postgres://piber_user:pux332FGmio65ysWqKDJFjZcZQjaFe8S@dpg-cumddd5umphs738hbiog-a.oregon-postgres.render.com/piber')
 }
 
     )
