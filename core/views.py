@@ -9,17 +9,20 @@ import pandas as pd
 from twilio.rest import Client
 import os
 
-def register(request):
+ef register(request):
     if request.method == 'POST':
         form = RegistrationForm(request.POST)
         if form.is_valid():
             try:
-                user = form.save()
-                return redirect('login')
+                user = form.save(commit=False)
+                user.set_password(form.cleaned_data['password1'])  # Criptografa a senha
+                user.save()
+                login(request, user)  # Autentica o usuário
+                return redirect('profile')  # Redireciona para o perfil
             except IntegrityError as e:
-                form.add_error('phone', 'Este telefone já está cadastrado!')
+                form.add_error('phone', 'Telefone já cadastrado!')
         else:
-            print(form.errors)
+            print("Erros no formulário:", form.errors)  # Debug
     else:
         form = RegistrationForm()
     return render(request, 'registration/register.html', {'form': form})
