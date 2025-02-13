@@ -9,7 +9,7 @@ import pandas as pd
 from twilio.rest import Client
 import os
 
-ef register(request):
+def register(request):
     if request.method == 'POST':
         form = RegistrationForm(request.POST)
         if form.is_valid():
