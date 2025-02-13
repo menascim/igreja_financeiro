@@ -1,7 +1,8 @@
 from django.urls import path
-from .views import register  # Importe a nova view
+from . import views
 
 urlpatterns = [
-    # ... outras URLs ...
-    path('cadastro/', register, name='cadastro'),
+    path('', views.profile, name='profile'),
+    path('login/', views.login_view, name='login'),
+    path('cadastro/', views.register, name='cadastro'),
 ]
