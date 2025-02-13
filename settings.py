@@ -73,3 +73,8 @@ LOGOUT_REDIRECT_URL = 'login'
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+# Para desenvolvimento (DEBUG=True)
+CSRF_COOKIE_SECURE = False    # Não requer HTTPS
+CSRF_COOKIE_HTTPONLY = False  # Permite acesso via JS (opcional)
+CSRF_TRUSTED_ORIGINS = ['http://localhost:8000']  # Domínios permitidos
