@@ -1,10 +1,10 @@
 from django.shortcuts import render, redirect
-from .forms import RegistrationForm
+from django.http import HttpResponse
+from django.db import IntegrityError
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse
+from .forms import RegistrationForm, LoginForm, ContributionForm
 from .models import Contribution
-from .forms import LoginForm, ContributionForm
 import pandas as pd
 from twilio.rest import Client
 import os
@@ -13,16 +13,20 @@ def register(request):
     if request.method == 'POST':
         form = RegistrationForm(request.POST)
         if form.is_valid():
-            user = form.save()
-            # Redireciona para a página de login após o cadastro
-            return redirect('login')
+            try:
+                user = form.save()
+                return redirect('login')
+            except IntegrityError as e:
+                form.add_error('phone', 'Este telefone já está cadastrado!')
+        else:
+            print(form.errors)
     else:
         form = RegistrationForm()
     return render(request, 'registration/register.html', {'form': form})
 
 def login_view(request):
     if request.method == 'POST':
-        form = LoginForm(request.POST)
+        form = LoginForm(request, data=request.POST)
         if form.is_valid():
             username = form.cleaned_data['username']
             password = form.cleaned_data['password']
@@ -32,29 +36,35 @@ def login_view(request):
                 return redirect('profile')
     else:
         form = LoginForm()
-    return render(request, 'login.html', {'form': form})
+    return render(request, 'registration/login.html', {'form': form})
 
 @login_required
 def profile(request):
-    contributions = Contribution.objects.filter(user=request.user)
+    contributions = Contribution.objects.filter(user=request.user).order_by('-date')
     if request.method == 'POST':
         form = ContributionForm(request.POST)
         if form.is_valid():
             contribution = form.save(commit=False)
             contribution.user = request.user
             contribution.save()
-            send_whatsapp_confirmation(request.user.phone)  # Notificação via WhatsApp
-            return render(request, 'profile.html', {'user': request.user})
+            try:
+                send_whatsapp_confirmation(request.user.phone)
+            except Exception as e:
+                print(f"Erro ao enviar WhatsApp: {str(e)}")
+            return redirect('profile')
     else:
         form = ContributionForm()
-    return render(request, 'profile.html', {'contributions': contributions, 'form': form})
+    return render(request, 'profile.html', {
+        'contributions': contributions,
+        'form': form
+    })
 
 @login_required
 def export_contributions(request):
     contributions = Contribution.objects.filter(user=request.user)
     df = pd.DataFrame(list(contributions.values('amount', 'date', 'payment_method')))
     response = HttpResponse(content_type='application/ms-excel')
-    response['Content-Disposition'] = 'attachment; filename="minhas_contribuicoes.xlsx"'
+    response['Content-Disposition'] = 'attachment; filename="contribuicoes.xlsx"'
     df.to_excel(response, index=False)
     return response
 
@@ -65,7 +75,7 @@ def send_whatsapp_confirmation(phone):
     
     message = client.messages.create(
         body='🎉 Sua contribuição foi registrada com sucesso! Obrigado.',
-        from_='whatsapp:+14155238886',  # Número do Twilio Sandbox
-        to=f'whatsapp:+55{phone}'       # Formato: +5511999999999
+        from_='whatsapp:+14155238886',
+        to=f'whatsapp:+55{phone}'
     )
     return message.sid
