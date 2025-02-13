@@ -1,3 +1,5 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.generic import TemplateView
 from django.shortcuts import render, redirect
 from .forms import RegistrationForm
 from django.contrib.auth import login, authenticate
@@ -9,6 +11,9 @@ import pandas as pd
 from twilio.rest import Client
 import os
 
+class ProfileView(LoginRequiredMixin, TemplateView):
+    template_name = 'profile.html'
+    
 def register(request):
     if request.method == 'POST':
         form = RegistrationForm(request.POST)
