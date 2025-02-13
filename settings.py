@@ -80,8 +80,9 @@ CSRF_COOKIE_HTTPONLY = False  # Permite acesso via JS (opcional)
 CSRF_TRUSTED_ORIGINS = ['http://localhost:8000']  # Domínios permitidos
 
 # Para produção (DEBUG=False)
-CSRF_COOKIE_SECURE = True     # Requer HTTPS
-CSRF_TRUSTED_ORIGINS = ['https://igreja-financeiro.onrender.com']  # Seu domínio
+CSRF_TRUSTED_ORIGINS = ['https://igreja-financeiro.onrender.com']
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
 
 # settings.py
 CSRF_COOKIE_SECURE = True  # True em produção, False em desenvolvimento
