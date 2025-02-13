@@ -7,8 +7,10 @@
             <div class="card-body">
                 <h2 class="card-title text-center mb-4">Login</h2>
                 <form method="post">
-                    {% csrf_token %}
-                    <div class="mb-3">
+                    {% csrf_token %}  <!-- ✅ Tag obrigatória -->
+                    {{ form.as_p }}
+                    <button type="submit">Entrar</button>
+                   <div class="mb-3">
                         <label for="id_username" class="form-label">Usuário</label>
                         {{ form.username }}
                     </div>
