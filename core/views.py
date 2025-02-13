@@ -1,3 +1,5 @@
+from django.contrib.auth.models import Group, Permission
+from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import TemplateView
 from django.shortcuts import render, redirect
@@ -13,6 +15,19 @@ import os
 
 class ProfileView(LoginRequiredMixin, TemplateView):
     template_name = 'profile.html'
+
+def cadastro(request):
+    if request.method == "POST":
+        # ... lógica de criação do usuário ...
+        user = User.objects.create_user(...)
+        
+        # Adicione o usuário a um grupo com permissões
+        grupo_contribuidores, _ = Group.objects.get_or_create(name='Contribuidores')
+        permissao_add = Permission.objects.get(codename='add_contribution')
+        grupo_contribuidores.permissions.add(permissao_add)
+        user.groups.add(grupo_contribuidores)
+        
+        return redirect('login')
     
 def register(request):
     if request.method == 'POST':
