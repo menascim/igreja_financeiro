@@ -49,22 +49,22 @@ def profile(request):
     return render(request, 'profile.html', {'contributions': contributions, 'form': form})
 
 @login_required
-def export_contributions(request):
-    contributions = Contribution.objects.filter(user=request.user)
-    df = pd.DataFrame(list(contributions.values('amount', 'date', 'payment_method')))
-    response = HttpResponse(content_type='application/ms-excel')
-    response['Content-Disposition'] = 'attachment; filename="minhas_contribuicoes.xlsx"'
-    df.to_excel(response, index=False)
-    return response
-
-def send_whatsapp_confirmation(phone):
-    account_sid = os.getenv('TWILIO_ACCOUNT_SID')
-    auth_token = os.getenv('TWILIO_AUTH_TOKEN')
-    client = Client(account_sid, auth_token)
-    
-    message = client.messages.create(
-        body='🎉 Sua contribuição foi registrada com sucesso! Obrigado.',
-        from_='whatsapp:+14155238886',  # Número do Twilio Sandbox
-        to=f'whatsapp:+55{phone}'       # Formato: +5511999999999
-    )
-    return message.sid
+def profile(request):
+    contributions = Contribution.objects.filter(user=request.user).order_by('-date')
+    if request.method == 'POST':
+        form = ContributionForm(request.POST)
+        if form.is_valid():
+            contribution = form.save(commit=False)
+            contribution.user = request.user
+            contribution.save()
+            try:
+                send_whatsapp_confirmation(request.user.phone)
+            except Exception as e:
+                print(f"Erro ao enviar WhatsApp: {str(e)}")
+            return redirect('profile')  # Redireciona para evitar reenvio
+    else:
+        form = ContributionForm()
+    return render(request, 'profile.html', {
+        'contributions': contributions,
+        'form': form
+    })
