@@ -1,41 +1,38 @@
-## Bem-vindo, {{ user.first_name }}!
+{% extends 'base.html' %}
 
-Telefone: {{ user.phone }}
-
-<form action="{% url 'logout' %}" method="post">
-    {% csrf_token %}
-    <button type="submit">**Sair**</button>
-</form>
-
-{% if form %}
-    <h2>Registrar Nova Contribuição</h2>
+{% block content %}
+<div class="container mt-4">
+    <h2>Bem-vindo, {{ user.username }}!</h2>
+    <p>Telefone: {{ user.phone }}</p>
+<h2>Bem-vindo, {{ user.username }}!</h2>
+<div class="mt-4">
+    <h4>Registrar Nova Contribuição</h4>
     <form method="post">
         {% csrf_token %}
-        {{ form.as_div }}
-        <button type="submit">**Salvar**</button>
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-success">Salvar</button>
     </form>
-{% endif %}
-
-<h2>Histórico de Contribuições</h2>
-<table>
-    <tr>
-        <th>Valor</th>
-        <th>Data</th>
-        <th>Método</th>
-    </tr>
-    {% for contrib in contributions %}
-    <tr>
-        <td>{{ contrib.valor }}</td>
-        <td>{{ contrib.data|date:"d/m/Y H:i" }}</td>
-        <td>{{ contrib.metodo }}</td>
-    </tr>
-    {% empty %}
-    <tr>
-        <td colspan="3">Nenhuma contribuição registrada ainda.</td>
-    </tr>
-    {% endfor %}
-</table>
-
-{% if contributions %}
-<a href="{% url 'export_contributions' %}">**Exportar para Excel**</a>
-{% endif %}
+</div>
+<div class="mt-5">
+    <h4>Histórico de Contribuições</h4>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Valor</th>
+                <th>Data</th>
+                <th>Método</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for contribution in contributions %}
+            <tr>
+                <td>R$ {{ contribution.amount }}</td>
+                <td>{{ contribution.date|date:"d/m/Y H:i" }}</td>
+                <td>{{ contribution.get_payment_method_display }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <a href="{% url 'export' %}" class="btn btn-dark">Exportar para Excel</a>
+</div>
+{% endblock %}
