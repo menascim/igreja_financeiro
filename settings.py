@@ -78,3 +78,14 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 CSRF_COOKIE_SECURE = False    # Não requer HTTPS
 CSRF_COOKIE_HTTPONLY = False  # Permite acesso via JS (opcional)
 CSRF_TRUSTED_ORIGINS = ['http://localhost:8000']  # Domínios permitidos
+
+# Para produção (DEBUG=False)
+CSRF_COOKIE_SECURE = True     # Requer HTTPS
+CSRF_TRUSTED_ORIGINS = ['https://igreja-financeiro.onrender.com']  # Seu domínio
+
+# settings.py
+CSRF_COOKIE_SECURE = True  # True em produção, False em desenvolvimento
+CSRF_TRUSTED_ORIGINS = [
+    'http://localhost:8000', 
+    'https://igreja-financeiro.onrender.com'
+]
