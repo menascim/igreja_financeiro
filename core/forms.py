@@ -2,6 +2,7 @@
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm
 from .models import Contribution
+from .models import CustomUser
 
 # Formulário de login
 class LoginForm(AuthenticationForm):
@@ -11,6 +12,9 @@ class LoginForm(AuthenticationForm):
 class RegistrationForm(UserCreationForm):
     email = forms.EmailField(required=True)
     phone = forms.CharField(max_length=20, required=True)
+    class Meta:
+        model = CustomUser
+        fields = ['username', 'email', 'phone', 'password1', 'password2']
 
 # Formulário de contribuição
 class ContributionForm(forms.ModelForm):
@@ -20,8 +24,5 @@ class ContributionForm(forms.ModelForm):
         widgets = {
             'amount': forms.NumberInput(attrs={'class': 'form-control'}),
             'payment_method': forms.Select(attrs={'class': 'form-control'}),
-      
-    class Meta:
-        model = CustomUser
-        fields = ['username', 'email', 'phone', 'password1', 'password2']   
+   
         }
