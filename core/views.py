@@ -28,7 +28,6 @@ def login_view(request):
             password = form.cleaned_data['password']
             user = authenticate(request, username=username, password=password)
             if user:
-                login(request, user)
                 return redirect('profile')
     else:
         form = LoginForm()
