@@ -16,17 +16,11 @@ class Contribution(models.Model):
         ('Dinheiro', 'Dinheiro'),
     ]    
     
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
     valor = models.DecimalField(max_digits=10, decimal_places=2)
-    data = models.DateTimeField(auto_now_add=True)
     metodo = models.CharField(max_length=50)
-    
+    data = models.DateTimeField(auto_now_add=True)
 
-    
-
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    amount = models.DecimalField(max_digits=10, decimal_places=2)
-    date = models.DateTimeField(auto_now_add=True)
-    payment_method = models.CharField(max_length=50, choices=PAYMENT_METHODS)
 
     def __str__(self):
         return f"{self.user.username} - R${self.amount}"
