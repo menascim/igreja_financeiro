@@ -70,6 +70,16 @@ def profile(request):
     })
 
 @login_required
+def add_contribution(request):
+    if request.method == 'POST':
+        form = ContributionForm(request.POST)
+        if form.is_valid():
+            contribution = form.save(commit=False)
+            contribution.user = request.user  # Associa ao usuário logado
+            contribution.save()
+    return redirect('profile')  # Volta para o perfil após salvar
+
+@login_required
 def export_contributions(request):
     contributions = Contribution.objects.filter(user=request.user)
     df = pd.DataFrame(list(contributions.values('amount', 'date', 'payment_method')))
