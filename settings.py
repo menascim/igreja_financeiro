@@ -9,8 +9,8 @@ sys.path.append(os.path.join(BASE_DIR, 'src'))
 SECRET_KEY = os.getenv('SECRET_KEY', 'secret-dev')  # Altere em produção!
 DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
-DEBUG = False
-ALLOWED_HOSTS = ['https://igreja-financeiro.onrender.com', 'localhost']
+DEBUG = True
+ALLOWED_HOSTS = ['*']
 ]
 
 INSTALLED_APPS = [
