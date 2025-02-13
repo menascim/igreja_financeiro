@@ -44,7 +44,7 @@ def profile(request):
             contribution.user = request.user
             contribution.save()
             send_whatsapp_confirmation(request.user.phone)  # Notificação via WhatsApp
-            return redirect('profile')
+            return render(request, 'profile.html', {'user': request.user})
     else:
         form = ContributionForm()
     return render(request, 'profile.html', {'contributions': contributions, 'form': form})
