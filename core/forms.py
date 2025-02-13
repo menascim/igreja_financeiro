@@ -1,6 +1,7 @@
 # core/forms.py
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.forms import UserCreationForm
 from .models import Contribution
 from .models import CustomUser
 
