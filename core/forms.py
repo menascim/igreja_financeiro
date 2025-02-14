@@ -4,6 +4,8 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.forms import UserCreationForm
 from .models import Contribution
 from .models import CustomUser
+from django.core.validators import EmailValidator  # Adicione esta linha
+
 
 # Formulário de login
 class LoginForm(AuthenticationForm):
@@ -20,7 +22,7 @@ class RegistrationForm(UserCreationForm):
     )
     
     email = forms.EmailField(
-        validators=[validate_email],
+        validators=[EmailValidator(message="Insira um e-mail válido!")],  # Corrigido
         widget=forms.EmailInput(attrs={'class': 'form-control'})
     )
 
