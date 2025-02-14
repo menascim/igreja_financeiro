@@ -90,21 +90,16 @@ def export_contributions(request):
     df.to_excel(response, index=False)
     return response
 
-def send_whatsapp_confirmation(phone):
+def send_whatsapp_confirmation(phone, valor):
     account_sid = os.getenv('TWILIO_ACCOUNT_SID')
     auth_token = os.getenv('TWILIO_AUTH_TOKEN')
     
-    if not all([account_sid, auth_token]):
-        print("Credenciais do Twilio não configuradas!")
-        return
-
-    client = Client(account_sid, auth_token)
-    
     try:
+        client = Client(account_sid, auth_token)
         message = client.messages.create(
-            body='🎉 Sua contribuição foi registrada!',
+            body=f"✅ Contribuição registrada! Valor: R$ {valor}",
             from_='whatsapp:+14155238886',
-            to=f'whatsapp:+55{phone}'
+            to=f'whatsapp:+55{phone}'  # Remove o "+55" se já incluso no número
         )
         return message.sid
     except Exception as e:
