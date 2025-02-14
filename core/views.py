@@ -101,7 +101,7 @@ def send_whatsapp_confirmation(phone):
     )
     return message.sid
 
-def cadastro(request):
+def Register(request):
     if request.method == 'POST':
         form = RegistrationForm(request.POST)
         if form.is_valid():
