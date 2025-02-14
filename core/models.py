@@ -14,7 +14,13 @@ class Contribution(models.Model):
         ('PIX', 'PIX'),
         ('Cartão', 'Cartão de Crédito/Débito'),
         ('Dinheiro', 'Dinheiro'),
-    ]    
+    ]
+
+    metodo = models.CharField(
+        max_length=50,
+        choices=PAYMENT_METHODS,  # Adicione as opções aqui
+        default='PIX'  # Opcional: defina um valor padrão
+    )
     
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
     valor = models.DecimalField(max_digits=10, decimal_places=2)
