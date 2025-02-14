@@ -28,7 +28,7 @@ def register(request):
         form = RegistrationForm(request.POST)
         if form.is_valid():
             user = form.save(commit=False)
-            user.first_name = form.cleaned_data['first_name']  # Salva o first_name
+            user.first_name = form.cleaned_data.get('first_name', '')  # Adiciona first_name
             user.save()
             return redirect('login')
     else:
