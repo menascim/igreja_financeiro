@@ -15,6 +15,7 @@ urlpatterns = [
     path('accounts/logout/', LogoutView.as_view(), name='logout'),
     path('profile/', ProfileView.as_view(), name='profile'),
     path('contributions/add/', add_contribution, name='add_contribution'),
+    path('contributions/add/', views.add_contribution, name='add_contribution'),
 ]
 
 
