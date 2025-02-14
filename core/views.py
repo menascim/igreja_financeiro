@@ -9,6 +9,7 @@ from django.contrib.auth.decorators import login_required
 from .forms import RegistrationForm, LoginForm, ContributionForm
 from .models import Contribution
 from .forms import ContributionForm
+from .services import send_whatsapp_notification
 import pandas as pd
 from twilio.rest import Client
 import os
@@ -99,3 +100,22 @@ def send_whatsapp_confirmation(phone):
         to=f'whatsapp:+55{phone}'
     )
     return message.sid
+
+def cadastro(request):
+    if request.method == 'POST':
+        form = RegistrationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            
+            # Login automático
+            login(request, user) 
+            
+            # Mensagem de boas-vindas via WhatsApp
+            mensagem = (
+                f"🎉 Cadastro realizado com sucesso!\n"
+                f"Nome: {user.first_name}\n"
+                f"Telefone: {user.phone}"
+            )
+            send_whatsapp_notification(user.phone, mensagem)
+            
+            return redirect('profile')  # Redirecionamento correto
