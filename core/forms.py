@@ -17,13 +17,11 @@ class RegistrationForm(UserCreationForm):
         model = CustomUser
         fields = ['username', 'email', 'phone', 'password1', 'password2']
 
-# Formulário de contribuição
 class ContributionForm(forms.ModelForm):
     class Meta:
         model = Contribution
         fields = ['valor', 'metodo']
         widgets = {
-            'amount': forms.NumberInput(attrs={'class': 'form-control'}),
-            'payment_method': forms.Select(attrs={'class': 'form-control'}),
-   
+            'valor': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.01'}),
+            'metodo': forms.Select(attrs={'class': 'form-control'}),
         }
