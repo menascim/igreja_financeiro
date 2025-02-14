@@ -3,12 +3,24 @@
 
 {% block content %}
 <div class="container py-5">
+    <!-- Alertas -->
+    {% if messages %}
+    <div class="container mb-4">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
     <!-- Cabeçalho -->
-    <div class="d-flex justify-content-between align-items-center mb-5">
-        <div>
-            <h1 class="display-4 mb-1">Bem-vindo, <span class="text-primary">{{ user.first_name }}</span>!</h1>
-            <p class="lead text-muted">
-                <i class="fas fa-phone-alt me-2"></i>{{ user.phone }}
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-5">
+        <div class="mb-3 mb-md-0">
+            <h1 class="display-5 mb-1">Bem-vindo, <span class="text-primary">{{ user.first_name }}</span>!</h1>
+            <p class="lead text-muted mb-0">
+                <i class="fas fa-phone-alt me-2"></i>{{ user.phone|default:"Telefone não cadastrado" }}
             </p>
         </div>
         <form method="post" action="{% url 'logout' %}">
@@ -19,38 +31,43 @@
         </form>
     </div>
 
-    <!-- Formulário de Contribuição -->
-    <div class="row">
-        <div class="col-lg-6 mb-5">
-            <div class="card shadow-lg border-0">
-                <div class="card-header bg-primary text-white">
+    <!-- Conteúdo Principal -->
+    <div class="row g-4">
+        <!-- Formulário -->
+        <div class="col-lg-6">
+            <div class="card shadow-lg border-0 h-100">
+                <div class="card-header bg-primary text-white py-3">
                     <h3 class="mb-0"><i class="fas fa-hand-holding-usd me-2"></i>Nova Contribuição</h3>
                 </div>
                 <div class="card-body">
                     <form method="post" action="{% url 'add_contribution' %}">
                         {% csrf_token %}
+                        <!-- Campo Valor -->
                         <div class="mb-4">
                             <label class="form-label fw-bold">Valor (R$)</label>
                             {{ form.valor }}
+                            <div class="form-text">Utilize ponto como separador decimal</div>
                             {% if form.valor.errors %}
-                                <div class="alert alert-danger mt-2">
-                                    {{ form.valor.errors }}
-                                </div>
+                            <div class="alert alert-danger mt-2">
+                                {{ form.valor.errors }}
+                            </div>
                             {% endif %}
                         </div>
 
+                        <!-- Campo Método -->
                         <div class="mb-4">
-                            <label class="form-label fw-bold">Método de Pagamento</label>
+                            <label class="form-label fw-bold">Método</label>
                             {{ form.metodo }}
                             {% if form.metodo.errors %}
-                                <div class="alert alert-danger mt-2">
-                                    {{ form.metodo.errors }}
-                                </div>
+                            <div class="alert alert-danger mt-2">
+                                {{ form.metodo.errors }}
+                            </div>
                             {% endif %}
                         </div>
 
+                        <!-- Botão Submit -->
                         <button type="submit" class="btn btn-primary btn-lg w-100">
-                            <i class="fas fa-save me-2"></i>Salvar Contribuição
+                            <i class="fas fa-save me-2"></i>Registrar Contribuição
                         </button>
                     </form>
                 </div>
@@ -59,14 +76,14 @@
 
         <!-- Histórico -->
         <div class="col-lg-6">
-            <div class="card shadow-lg border-0">
-                <div class="card-header bg-success text-white">
+            <div class="card shadow-lg border-0 h-100">
+                <div class="card-header bg-success text-white py-3">
                     <h3 class="mb-0"><i class="fas fa-history me-2"></i>Histórico</h3>
                 </div>
-                <div class="card-body">
+                <div class="card-body p-0">
                     <div class="table-responsive">
-                        <table class="table table-hover table-striped">
-                            <thead class="table-dark">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light">
                                 <tr>
                                     <th>Valor</th>
                                     <th>Data</th>
@@ -75,15 +92,24 @@
                             </thead>
                             <tbody>
                                 {% for contrib in contributions %}
-                                <tr>
-                                    <td class="fw-bold text-success">R$ {{ contrib.valor }}</td>
+                                <tr class="clickable-row" data-href="#">
+                                    <td class="fw-bold text-success">
+                                        {{ contrib.valor|floatformat:2 }}
+                                    </td>
                                     <td>{{ contrib.data|date:"d/m/Y H:i" }}</td>
-                                    <td><span class="badge bg-primary">{{ contrib.get_metodo_display }}</span></td>
+                                    <td>
+                                        <span class="badge rounded-pill bg-primary">
+                                            {{ contrib.get_metodo_display }}
+                                        </span>
+                                    </td>
                                 </tr>
                                 {% empty %}
                                 <tr>
-                                    <td colspan="3" class="text-center text-muted py-4">
-                                        Nenhuma contribuição registrada
+                                    <td colspan="3" class="text-center py-4">
+                                        <div class="d-inline-block">
+                                            <i class="fas fa-inbox fa-2x text-muted mb-3"></i>
+                                            <p class="mb-0 text-muted">Nenhum registro encontrado</p>
+                                        </div>
                                     </td>
                                 </tr>
                                 {% endfor %}
