@@ -13,13 +13,14 @@ import pandas as pd
 from twilio.rest import Client
 import os
 
-class ProfileView(TemplateView):
+class ProfileView(LoginRequiredMixin, TemplateView):
     template_name = 'profile.html'
 
- def get_context_data(self, **kwargs):
+    def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['form'] = ContributionForm()  # Adiciona o formulário ao contexto
-        return context
+        context['contributions'] = Contribution.objects.filter(user=self.request.user)
+        context['form'] = ContributionForm()  # Certifique-se de que esta linha está indentada corretamente
+        return context  # Esta linha também deve estar alinhada com o início do métod
 
 def register(request):
     if request.method == 'POST':
