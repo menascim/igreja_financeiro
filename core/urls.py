@@ -7,7 +7,7 @@ from .views import ProfileView, add_contribution
 
 urlpatterns = [
     path('perfil/', views.profile, name='profile'),
-    path('', views.profile, name='profile'),  # Página inicial (após login)
+    path('', ProfileView.as_view(), name='home'),
     path('cadastro/', views.register, name='cadastro'),  # Cadastro de usuários
     path('login/', LoginView.as_view(template_name='registration/login.html'), name='login'),
     path('logout/', LogoutView.as_view(), name='logout'),
