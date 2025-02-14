@@ -22,9 +22,9 @@ class Contribution(models.Model):
         ('Dinheiro', 'Dinheiro'),
     ]
 
-    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     valor = models.DecimalField(max_digits=10, decimal_places=2)
-    metodo = models.CharField(
+    metodo = models.CharField(  # Apenas uma declaração do campo
         max_length=50,
         choices=PAYMENT_METHODS,
         default='PIX'
