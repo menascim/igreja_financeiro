@@ -13,20 +13,20 @@
 
     <!-- Formulário de Contribuição -->
     <h2>Registrar Nova Contribuição</h2>
-    <form method="post" action="{% url 'add_contribution' %}">
+   <form method="post" action="{% url 'add_contribution' %}">
     {% csrf_token %}
-        <div class="form-group">
-            <label>Valor (R$):</label>
-            {{ form.valor }}
-            {{ form.valor.errors }}
-        </div>
-        <div class="form-group">
-            <label>Método de Pagamento:</label>
-            {{ form.metodo }}
-            {{ form.metodo.errors }}
-        </div>
-        <button type="submit" class="btn btn-primary">Salvar</button>
-    </form>
+    <div class="form-group">
+        <label>Valor (R$):</label>
+        {{ form.valor }}  <!-- Campo "valor" -->
+        {{ form.valor.errors }}
+    </div>
+    <div class="form-group">
+        <label>Método de Pagamento:</label>
+        {{ form.metodo }}  <!-- Campo "metodo" -->
+        {{ form.metodo.errors }}
+    </div>
+    <button type="submit" class="btn btn-primary">Salvar</button>
+</form>
 
     <!-- Histórico de Contribuições -->
     <h2>Histórico</h2>
