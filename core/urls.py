@@ -6,16 +6,13 @@ from .views import ProfileView, add_contribution
 
 
 urlpatterns = [
-    path('perfil/', views.profile, name='profile'),
-    path('', ProfileView.as_view(), name='home'),
-    path('cadastro/', views.register, name='cadastro'),  # Cadastro de usuários
-    path('login/', LoginView.as_view(template_name='registration/login.html'), name='login'),
+   path('', ProfileView.as_view(), name='home'),
+    path('cadastro/', views.register, name='cadastro'),
+    path('login/', views.login_view, name='login'),  # Usando a view personalizada
     path('logout/', LogoutView.as_view(), name='logout'),
-    path('exportar/', views.export_contributions, name='export'),
-    path('accounts/logout/', LogoutView.as_view(), name='logout'),
     path('profile/', ProfileView.as_view(), name='profile'),
-    path('contributions/add/', add_contribution, name='add_contribution'),
     path('contributions/add/', views.add_contribution, name='add_contribution'),
+    path('exportar/', views.export_contributions, name='export'),
 ]
 
 
