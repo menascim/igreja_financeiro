@@ -46,7 +46,7 @@
                         <div class="mb-4">
                             <label class="form-label fw-bold">Valor (R$)</label>
                             {{ form.valor }}
-                            <div class="form-text">Utilize ponto como separador decimal</div>
+                            <div class="form-text">Exemplo: 150.00</div>
                             {% if form.valor.errors %}
                             <div class="alert alert-danger mt-2">
                                 {{ form.valor.errors }}
@@ -67,7 +67,7 @@
 
                         <!-- Botão Submit -->
                         <button type="submit" class="btn btn-primary btn-lg w-100">
-                            <i class="fas fa-save me-2"></i>Registrar Contribuição
+                            <i class="fas fa-save me-2"></i>Registrar
                         </button>
                     </form>
                 </div>
@@ -92,13 +92,20 @@
                             </thead>
                             <tbody>
                                 {% for contrib in contributions %}
-                                <tr class="clickable-row" data-href="#">
+                                <tr>
                                     <td class="fw-bold text-success">
-                                        {{ contrib.valor|floatformat:2 }}
+                                        R$ {{ contrib.valor|floatformat:2 }}
                                     </td>
                                     <td>{{ contrib.data|date:"d/m/Y H:i" }}</td>
                                     <td>
                                         <span class="badge rounded-pill bg-primary">
+                                            {% if contrib.metodo == 'PIX' %}
+                                                <i class="fas fa-qrcode me-2"></i>
+                                            {% elif contrib.metodo == 'Cartão' %}
+                                                <i class="fas fa-credit-card me-2"></i>
+                                            {% else %}
+                                                <i class="fas fa-money-bill-wave me-2"></i>
+                                            {% endif %}
                                             {{ contrib.get_metodo_display }}
                                         </span>
                                     </td>
@@ -108,7 +115,7 @@
                                     <td colspan="3" class="text-center py-4">
                                         <div class="d-inline-block">
                                             <i class="fas fa-inbox fa-2x text-muted mb-3"></i>
-                                            <p class="mb-0 text-muted">Nenhum registro encontrado</p>
+                                            <p class="mb-0 text-muted">Nenhuma contribuição registrada</p>
                                         </div>
                                     </td>
                                 </tr>
