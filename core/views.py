@@ -80,7 +80,7 @@ def add_contribution(request):
             contribution.user = request.user
             contribution.save()
     return redirect('profile')
-
+    
 @login_required
 def export_contributions(request):
     contributions = Contribution.objects.filter(user=request.user)
