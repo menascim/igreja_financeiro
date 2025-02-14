@@ -1,18 +1,19 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.contrib.auth import get_user_model
-
+from django.core.validators import RegexValidator
 
 class CustomUser(AbstractUser):
     phone = models.CharField(
         max_length=20,
         unique=True,
         validators=[
-            RegexValidator(
+            RegexValidator(  # Agora reconhecido
                 regex=r'^\+55\d{10,11}$',
                 message="Formato: +5511999999999"
             )
-        ]
+        ],
+        error_messages={'unique': 'Este telefone já está registrado!'}
     )
 class Contribution(models.Model):
     PAYMENT_METHODS = [
