@@ -13,9 +13,11 @@ class LoginForm(AuthenticationForm):
 class RegistrationForm(UserCreationForm):
     email = forms.EmailField(required=True)
     phone = forms.CharField(max_length=20, required=True)
+    first_name = forms.CharField(required=True, label="Nome")  # Novo campo
+
     class Meta:
         model = CustomUser
-        fields = ['username', 'email', 'phone', 'password1', 'password2']
+        fields = ['username', 'first_name', 'email', 'phone', 'password1', 'password2']  # Campo adicionado
 
 class ContributionForm(forms.ModelForm):
     class Meta:
