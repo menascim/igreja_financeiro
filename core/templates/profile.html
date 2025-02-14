@@ -2,56 +2,97 @@
 {% load static %}
 
 {% block content %}
-<div class="container">
-    <h1>Bem-vindo, {{ user.first_name }}!</h1>
-    <p>Telefone: {{ user.phone }}</p>
-
-<form method="post" action="{% url 'logout' %}">
-    {% csrf_token %}
-    <button type="submit">Sair</button>
-</form>
-
-   <h2>Registrar Nova Contribuição</h2>
-<form method="post" action="{% url 'add_contribution' %}">
-    {% csrf_token %}
-    <div class="form-group">
-        <label>Valor (R$):</label>
-        {{ form.valor }}  <!-- Campo "valor" -->
-        {{ form.valor.errors }}
+<div class="container py-5">
+    <!-- Cabeçalho -->
+    <div class="d-flex justify-content-between align-items-center mb-5">
+        <div>
+            <h1 class="display-4 mb-1">Bem-vindo, <span class="text-primary">{{ user.first_name }}</span>!</h1>
+            <p class="lead text-muted">
+                <i class="fas fa-phone-alt me-2"></i>{{ user.phone }}
+            </p>
+        </div>
+        <form method="post" action="{% url 'logout' %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger btn-lg">
+                <i class="fas fa-sign-out-alt me-2"></i>Sair
+            </button>
+        </form>
     </div>
-    <form method="post" action="{% url 'add_contribution' %}">
-    {% csrf_token %}
-    <div class="form-group">
-        <label>Método de Pagamento:</label>
-        {{ form.metodo }}  <!-- Isso renderizará o dropdown -->
-        {{ form.metodo.errors }}
-    </div>
-    <button type="submit">Salvar</button>
-</form>
 
-    <!-- Histórico de Contribuições -->
-    <h2>Histórico</h2>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Valor</th>
-                <th>Data</th>
-                <th>Método</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for contrib in contributions %}
-            <tr>
-                <td>R$ {{ contrib.valor }}</td>
-                <td>{{ contrib.data|date:"d/m/Y H:i" }}</td>
-                <td>{{ contrib.get_metodo_display }}</td>
-            </tr>
-            {% empty %}
-            <tr>
-                <td colspan="3">Nenhuma contribuição registrada.</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <!-- Formulário de Contribuição -->
+    <div class="row">
+        <div class="col-lg-6 mb-5">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0"><i class="fas fa-hand-holding-usd me-2"></i>Nova Contribuição</h3>
+                </div>
+                <div class="card-body">
+                    <form method="post" action="{% url 'add_contribution' %}">
+                        {% csrf_token %}
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Valor (R$)</label>
+                            {{ form.valor }}
+                            {% if form.valor.errors %}
+                                <div class="alert alert-danger mt-2">
+                                    {{ form.valor.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Método de Pagamento</label>
+                            {{ form.metodo }}
+                            {% if form.metodo.errors %}
+                                <div class="alert alert-danger mt-2">
+                                    {{ form.metodo.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-lg w-100">
+                            <i class="fas fa-save me-2"></i>Salvar Contribuição
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Histórico -->
+        <div class="col-lg-6">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-success text-white">
+                    <h3 class="mb-0"><i class="fas fa-history me-2"></i>Histórico</h3>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover table-striped">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Valor</th>
+                                    <th>Data</th>
+                                    <th>Método</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for contrib in contributions %}
+                                <tr>
+                                    <td class="fw-bold text-success">R$ {{ contrib.valor }}</td>
+                                    <td>{{ contrib.data|date:"d/m/Y H:i" }}</td>
+                                    <td><span class="badge bg-primary">{{ contrib.get_metodo_display }}</span></td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="3" class="text-center text-muted py-4">
+                                        Nenhuma contribuição registrada
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}
