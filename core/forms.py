@@ -22,6 +22,12 @@ class ContributionForm(forms.ModelForm):
         model = Contribution
         fields = ['valor', 'metodo']
         widgets = {
-            'valor': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.01'}),
-            'metodo': forms.Select(attrs={'class': 'form-control'}),
+            'metodo': forms.Select(attrs={'class': 'form-control'}),  # Widget Select
         }
+
+    # Opcional: Para personalizar o label ou traduzir
+    metodo = forms.ChoiceField(
+        label="Método de Pagamento",
+        choices=Contribution.PAYMENT_METHODS,
+        widget=forms.Select(attrs={'class': 'form-control'})
+    )
