@@ -78,9 +78,9 @@ def add_contribution(request):
             contribution = form.save(commit=False)
             contribution.user = request.user
             contribution.save()
-            messages.success(request, "Contribuição salva com sucesso!")
+            messages.success(request, 'Contribuição salva!')
         else:
-            messages.error(request, "Erro no formulário. Verifique os campos.")
+            messages.error(request, 'Erro no formulário.')
     return redirect('profile')
 
 @login_required
