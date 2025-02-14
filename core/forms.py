@@ -38,7 +38,11 @@ class ContributionForm(forms.ModelForm):
         model = Contribution
         fields = ['valor', 'metodo']
         widgets = {
-            'metodo': forms.Select(attrs={'class': 'form-control'}),  # Widget Select
+            'metodo': forms.Select(attrs={'class': 'form-control'}),
+            'valor': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'step': '0.01'
+            })
         }
 
     # Opcional: Para personalizar o label ou traduzir
