@@ -11,9 +11,8 @@
     <button type="submit">Sair</button>
 </form>
 
-    <!-- Formulário de Contribuição -->
-    <h2>Registrar Nova Contribuição</h2>
-   <form method="post" action="{% url 'add_contribution' %}">
+   <h2>Registrar Nova Contribuição</h2>
+<form method="post" action="{% url 'add_contribution' %}">
     {% csrf_token %}
     <div class="form-group">
         <label>Valor (R$):</label>
