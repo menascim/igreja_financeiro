@@ -93,14 +93,22 @@ def export_contributions(request):
 def send_whatsapp_confirmation(phone):
     account_sid = os.getenv('TWILIO_ACCOUNT_SID')
     auth_token = os.getenv('TWILIO_AUTH_TOKEN')
+    
+    if not all([account_sid, auth_token]):
+        print("Credenciais do Twilio não configuradas!")
+        return
+
     client = Client(account_sid, auth_token)
     
-    message = client.messages.create(
-        body='🎉 Sua contribuição foi registrada com sucesso! Obrigado.',
-        from_='whatsapp:+14155238886',
-        to=f'whatsapp:+55{phone}'
-    )
-    return message.sid
+    try:
+        message = client.messages.create(
+            body='🎉 Sua contribuição foi registrada!',
+            from_='whatsapp:+14155238886',
+            to=f'whatsapp:+55{phone}'
+        )
+        return message.sid
+    except Exception as e:
+        print(f"Erro ao enviar WhatsApp: {str(e)}")
 
 def Register(request):
     if request.method == 'POST':
