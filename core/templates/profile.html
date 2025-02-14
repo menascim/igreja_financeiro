@@ -6,16 +6,15 @@
     <h1>Bem-vindo, {{ user.first_name }}!</h1>
     <p>Telefone: {{ user.phone }}</p>
 
-    <!-- Botão de Sair -->
-    <form method="post" action="{% url 'logout' %}">
-        {% csrf_token %}
-        <button type="submit" class="btn btn-danger">Sair</button>
-    </form>
+<form method="post" action="{% url 'logout' %}">
+    {% csrf_token %}
+    <button type="submit">Sair</button>
+</form>
 
     <!-- Formulário de Contribuição -->
     <h2>Registrar Nova Contribuição</h2>
-    <form method="post">
-        {% csrf_token %}
+    <form method="post" action="{% url 'add_contribution' %}">
+    {% csrf_token %}
         <div class="form-group">
             <label>Valor (R$):</label>
             {{ form.valor }}
