@@ -5,9 +5,14 @@ from django.contrib.auth import get_user_model
 
 class CustomUser(AbstractUser):
     phone = models.CharField(
-        max_length=20, 
+        max_length=20,
         unique=True,
-        error_messages={'unique': 'Este telefone já está registrado!'}
+        validators=[
+            RegexValidator(
+                regex=r'^\+55\d{10,11}$',
+                message="Formato: +5511999999999"
+            )
+        ]
     )
 class Contribution(models.Model):
     PAYMENT_METHODS = [
