@@ -22,17 +22,14 @@ class Contribution(models.Model):
         ('Dinheiro', 'Dinheiro'),
     ]
 
-    metodo = models.CharField(
-        max_length=50,
-        choices=PAYMENT_METHODS,  # Adicione as opções aqui
-        default='PIX'  # Opcional: defina um valor padrão
-    )
-    
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
     valor = models.DecimalField(max_digits=10, decimal_places=2)
-    metodo = models.CharField(max_length=50)
+    metodo = models.CharField(
+        max_length=50,
+        choices=PAYMENT_METHODS,
+        default='PIX'
+    )
     data = models.DateTimeField(auto_now_add=True)
 
-
     def __str__(self):
-        return f"{self.user.username} - R${self.amount}"
+        return f"{self.user.username} - R${self.valor}"  # Corrigido para 'valor'
