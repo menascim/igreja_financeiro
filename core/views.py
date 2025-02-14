@@ -71,6 +71,7 @@ def profile(request):
         'form': form
     })
 
+# views.py (trecho atualizado)
 @login_required
 def add_contribution(request):
     if request.method == 'POST':
@@ -79,6 +80,18 @@ def add_contribution(request):
             contribution = form.save(commit=False)
             contribution.user = request.user
             contribution.save()
+            
+            # Envia WhatsApp
+            try:
+                send_whatsapp_confirmation(
+                    request.user.phone.replace("+55", ""),  # Remove +55 se existir
+                    contribution.valor
+                )
+            except Exception as e:
+                print(f"Erro fora do Twilio: {str(e)}")
+            
+            return redirect('profile')
+    
     return redirect('profile')
     
 @login_required
