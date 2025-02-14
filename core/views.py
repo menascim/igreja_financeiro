@@ -8,16 +8,17 @@ from django.contrib.auth import login, authenticate
 from django.contrib.auth.decorators import login_required
 from .forms import RegistrationForm, LoginForm, ContributionForm
 from .models import Contribution
+from .forms import ContributionForm
 import pandas as pd
 from twilio.rest import Client
 import os
 
-class ProfileView(LoginRequiredMixin, TemplateView):
-    template_name = 'profile.html'  # Nome do template do perfil
+class ProfileView(TemplateView):
+    template_name = 'profile.html'
 
-    def get_context_data(self, **kwargs):
+ def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['contributions'] = Contribution.objects.filter(user=self.request.user)
+        context['form'] = ContributionForm()  # Adiciona o formulário ao contexto
         return context
 
 def register(request):
