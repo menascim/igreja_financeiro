@@ -13,12 +13,9 @@ class LoginForm(AuthenticationForm):
     password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}))
 
 class RegistrationForm(UserCreationForm):
-    phone = forms.CharField(
-        label="Telefone",
-        widget=forms.TextInput(attrs={
-            'placeholder': '+5511999999999',
-            'class': 'form-control'
-        })
+    email = forms.EmailField(
+        validators=[EmailValidator(message="E-mail inválido!")],  # Uso correto
+        widget=forms.EmailInput(attrs={'class': 'form-control'})
     )
     
     email = forms.EmailField(
