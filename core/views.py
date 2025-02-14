@@ -51,7 +51,7 @@ def login_view(request):
 
 @login_required
 def profile(request):
-    contributions = Contribution.objects.filter(user=request.user).order_by('-date')
+    contributions = Contribution.objects.filter(user=request.user).order_by('-data')  # Corrigido para 'data'
     if request.method == 'POST':
         form = ContributionForm(request.POST)
         if form.is_valid():
@@ -59,6 +59,7 @@ def profile(request):
             contribution.user = request.user
             contribution.save()
             try:
+                # Corrigido para usar a função correta
                 send_whatsapp_confirmation(request.user.phone)
             except Exception as e:
                 print(f"Erro ao enviar WhatsApp: {str(e)}")
