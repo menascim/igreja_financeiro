@@ -110,7 +110,7 @@ def send_whatsapp_confirmation(phone, valor):
     try:
         client = Client(account_sid, auth_token)
         message = client.messages.create(
-            body=f"✅ Contribuição registrada! Valor: R$ {valor}",
+            body=f"✅ Recebemos sua contribuição, Financeiro Piber! Valor: R$ {valor}",
             from_='whatsapp:+14155238886',
             to=f'whatsapp:+55{phone}'  # Remove o "+55" se já incluso no número
         )
