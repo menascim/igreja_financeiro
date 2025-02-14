@@ -19,12 +19,14 @@
         {{ form.valor }}  <!-- Campo "valor" -->
         {{ form.valor.errors }}
     </div>
+    <form method="post" action="{% url 'add_contribution' %}">
+    {% csrf_token %}
     <div class="form-group">
         <label>Método de Pagamento:</label>
-        {{ form.metodo }}  <!-- Campo "metodo" -->
+        {{ form.metodo }}  <!-- Isso renderizará o dropdown -->
         {{ form.metodo.errors }}
     </div>
-    <button type="submit" class="btn btn-primary">Salvar</button>
+    <button type="submit">Salvar</button>
 </form>
 
     <!-- Histórico de Contribuições -->
