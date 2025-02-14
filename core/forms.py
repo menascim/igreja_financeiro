@@ -11,13 +11,25 @@ class LoginForm(AuthenticationForm):
     password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}))
 
 class RegistrationForm(UserCreationForm):
-    email = forms.EmailField(required=True)
-    phone = forms.CharField(max_length=20, required=True)
-    first_name = forms.CharField(required=True, label="Nome")  # Novo campo
+    phone = forms.CharField(
+        label="Telefone",
+        widget=forms.TextInput(attrs={
+            'placeholder': '+5511999999999',
+            'class': 'form-control'
+        })
+    )
+    
+    email = forms.EmailField(
+        validators=[validate_email],
+        widget=forms.EmailInput(attrs={'class': 'form-control'})
+    )
 
     class Meta:
         model = CustomUser
-        fields = ['username', 'first_name', 'email', 'phone', 'password1', 'password2']  # Campo adicionado
+        fields = ['username', 'phone', 'email', 'password1', 'password2']
+        widgets = {
+            'username': forms.TextInput(attrs={'class': 'form-control'}),
+        }
 
 class ContributionForm(forms.ModelForm):
     class Meta:
