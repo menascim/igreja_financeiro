@@ -20,6 +20,12 @@
 
                     <form method="post">
                         {% csrf_token %}
+
+                        <div class="form-group">
+    <label>Nome:</label>
+    {{ form.first_name }}
+    {{ form.first_name.errors }}
+</div>
                         
                         <div class="row g-3">
                             <!-- Usuário -->
