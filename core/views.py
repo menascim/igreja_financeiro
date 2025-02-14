@@ -26,13 +26,10 @@ def register(request):
     if request.method == 'POST':
         form = RegistrationForm(request.POST)
         if form.is_valid():
-            try:
-                user = form.save()
-                return redirect('login')
-            except IntegrityError as e:
-                form.add_error('phone', 'Este telefone já está cadastrado!')
-        else:
-            print(form.errors)
+            user = form.save(commit=False)
+            user.first_name = form.cleaned_data['first_name']  # Salva o first_name
+            user.save()
+            return redirect('login')
     else:
         form = RegistrationForm()
     return render(request, 'registration/register.html', {'form': form})
