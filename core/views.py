@@ -64,13 +64,14 @@ def login_view(request):
 
 @login_required
 def profile(request):
-    contributions = Contribution.objects.filter(user=request.user).order_by('-data')
     if request.method == 'POST':
         form = ContributionForm(request.POST)
         if form.is_valid():
             contribution = form.save(commit=False)
             contribution.user = request.user
+            contribution.data = timezone.now().date()  # Adicione a data automaticamente
             contribution.save()
+            return redirect('profile')
             try:
                 send_whatsapp_confirmation(
                     request.user.phone.replace("+55", ""),
