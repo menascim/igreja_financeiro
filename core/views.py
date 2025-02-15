@@ -93,7 +93,6 @@ def add_contribution(request):
     return render(request, 'admin/add_contribution.html', {'form': form})
             
             # Envia WhatsApp
-            try:
                 send_whatsapp_confirmation(
                     request.user.phone.replace("+55", ""),  # Remove +55 se existir
                     contribution.valor
