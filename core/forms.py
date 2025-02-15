@@ -5,6 +5,7 @@ from django.contrib.auth.forms import UserCreationForm
 from .models import Contribution
 from .models import CustomUser
 from django.core.validators import EmailValidator  # Adicione esta linha
+from dal import autocomplete
 
 
 # Formulário de login
@@ -31,9 +32,13 @@ class RegistrationForm(UserCreationForm):
         }
 
 class ContributionForm(forms.ModelForm):
-    class Meta:
-        model = Contribution
-        fields = ['user', 'valor', 'metodo']
+    user = forms.ModelChoiceField(
+        queryset=CustomUser.objects.all(),
+        widget=autocomplete.ModelSelect2(
+            url='user-autocomplete',
+            attrs={'data-html': True}
+        )
+    )
 
          def __init__(self, *args, **kwargs):
         is_admin = kwargs.pop('is_admin', False)
