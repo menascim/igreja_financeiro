@@ -139,8 +139,8 @@ def send_whatsapp_confirmation(phone, valor):
     except Exception as e:
         print(f"Erro ao enviar WhatsApp: {str(e)}")
 
-class UserAutocomplete(autocomplete.Select2QuerySetView):
-    def get_queryset(self):
+class UserAutocomplete(Select2QuerySetView):
+   def get_queryset(self):
         qs = CustomUser.objects.all()
         if self.q:
             qs = qs.filter(
