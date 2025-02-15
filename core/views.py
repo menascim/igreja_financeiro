@@ -7,9 +7,9 @@ from django.http import HttpResponse
 from django.db import IntegrityError
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.decorators import login_required
+from django.db.models import Q
 from .forms import RegistrationForm, LoginForm, ContributionForm
-from .models import Contribution
-from .forms import ContributionForm
+from .models import Contribution, CustomUser  # Adicionei o CustomUser import
 from .services import send_whatsapp_notification
 import pandas as pd
 from twilio.rest import Client
@@ -21,16 +21,28 @@ class ProfileView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['contributions'] = Contribution.objects.filter(user=self.request.user)
-        context['form'] = ContributionForm()  # Certifique-se de que esta linha está indentada corretamente
-        return context  # Esta linha também deve estar alinhada com o início do métod
+        context['form'] = ContributionForm()
+        return context
 
 def register(request):
     if request.method == 'POST':
         form = RegistrationForm(request.POST)
         if form.is_valid():
             user = form.save(commit=False)
-            user.first_name = form.cleaned_data.get('first_name', '')  # Adiciona first_name
+            user.first_name = form.cleaned_data.get('first_name', '')
             user.save()
+            
+            # Mensagem de boas-vindas
+            mensagem = (
+                f"🎉 Cadastro realizado com sucesso!\n"
+                f"Nome: {user.first_name}\n"
+                f"Telefone: {user.phone}"
+            )
+            try:
+                send_whatsapp_confirmation(user.phone, mensagem)
+            except Exception as e:
+                print(f"Erro no WhatsApp: {str(e)}")
+            
             return redirect('login')
     else:
         form = RegistrationForm()
@@ -52,7 +64,7 @@ def login_view(request):
 
 @login_required
 def profile(request):
-    contributions = Contribution.objects.filter(user=request.user).order_by('-data')  # Corrigido para 'data'
+    contributions = Contribution.objects.filter(user=request.user).order_by('-data')
     if request.method == 'POST':
         form = ContributionForm(request.POST)
         if form.is_valid():
@@ -60,8 +72,10 @@ def profile(request):
             contribution.user = request.user
             contribution.save()
             try:
-                # Corrigido para usar a função correta
-                send_whatsapp_confirmation(request.user.phone)
+                send_whatsapp_confirmation(
+                    request.user.phone.replace("+55", ""),
+                    contribution.amount  # Alterado de 'valor' para 'amount'
+                )
             except Exception as e:
                 print(f"Erro ao enviar WhatsApp: {str(e)}")
             return redirect('profile')
@@ -72,7 +86,6 @@ def profile(request):
         'form': form
     })
 
-# views.py (trecho atualizado)
 @login_required
 def add_contribution(request):
     is_admin = request.user.is_staff
@@ -83,27 +96,24 @@ def add_contribution(request):
             contribution = form.save(commit=False)
             
             if not is_admin:
-                contribution.user = request.user  # Usuário normal: vincula a si mesmo
-                
-            contribution.save()
-            return redirect('profile')
-    else:
-        form = ContributionForm(is_admin=is_admin)
-    
-    return render(request, 'admin/add_contribution.html', {'form': form})
+                contribution.user = request.user
             
-            # Envia WhatsApp
+            contribution.save()
+            
+            try:
                 send_whatsapp_confirmation(
-                    request.user.phone.replace("+55", ""),  # Remove +55 se existir
-                    contribution.valor
+                    request.user.phone.replace("+55", ""),
+                    contribution.amount  # Alterado de 'valor' para 'amount'
                 )
             except Exception as e:
                 print(f"Erro fora do Twilio: {str(e)}")
             
             return redirect('profile')
+    else:
+        form = ContributionForm(is_admin=is_admin)
     
-    return redirect('profile')
-    
+    return render(request, 'admin/add_contribution.html', {'form': form})
+
 @login_required
 def export_contributions(request):
     contributions = Contribution.objects.filter(user=request.user)
@@ -122,30 +132,11 @@ def send_whatsapp_confirmation(phone, valor):
         message = client.messages.create(
             body=f"✅ Recebemos sua contribuição, Financeiro Piber! Valor: R$ {valor}",
             from_='whatsapp:+14155238886',
-            to=f'whatsapp:+55{phone}'  # Remove o "+55" se já incluso no número
+            to=f'whatsapp:+55{phone}'
         )
         return message.sid
     except Exception as e:
         print(f"Erro ao enviar WhatsApp: {str(e)}")
-
-def Register(request):
-    if request.method == 'POST':
-        form = RegistrationForm(request.POST)
-        if form.is_valid():
-            user = form.save()
-            
-            # Login automático
-            login(request, user) 
-            
-            # Mensagem de boas-vindas via WhatsApp
-            mensagem = (
-                f"🎉 Cadastro realizado com sucesso!\n"
-                f"Nome: {user.first_name}\n"
-                f"Telefone: {user.phone}"
-            )
-            send_whatsapp_notification(user.phone, mensagem)
-            
-            return redirect('profile')  # Redirecionamento correto
 
 class UserAutocomplete(autocomplete.Select2QuerySetView):
     def get_queryset(self):
