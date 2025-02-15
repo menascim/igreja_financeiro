@@ -2,6 +2,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from .models import CustomUser
+from .models import Contribution
 
 class CustomUserAdmin(UserAdmin):
     fieldsets = (
@@ -11,4 +12,10 @@ class CustomUserAdmin(UserAdmin):
     )
 
 admin.site.register(CustomUser, CustomUserAdmin)
+
+@admin.register(Contribution)
+class ContributionAdmin(admin.ModelAdmin):
+    list_display = ('user', 'valor', 'metodo', 'data')
+    search_fields = ['user__first_name', 'user__phone']
+    list_filter = ('metodo', 'data')
 
