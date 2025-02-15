@@ -1,4 +1,4 @@
-from dal import autocomplete
+from dal_select2.views import Select2QuerySetView
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import TemplateView
