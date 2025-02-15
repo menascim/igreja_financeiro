@@ -16,6 +16,11 @@ class CustomUser(AbstractUser):
         error_messages={'unique': 'Este telefone já está registrado!'}
     )
 class Contribution(models.Model):
+    user = models.ForeignKey(
+        CustomUser, 
+        on_delete=models.CASCADE,
+        verbose_name="Membro"
+    )
     PAYMENT_METHODS = [
         ('PIX', 'PIX'),
         ('Cartão', 'Cartão de Crédito/Débito'),
