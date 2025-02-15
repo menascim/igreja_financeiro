@@ -25,7 +25,7 @@ class RegistrationForm(UserCreationForm):
 class ContributionForm(forms.ModelForm):
     user = forms.ModelChoiceField(
         queryset=CustomUser.objects.all(),
-        widget=autocomplete.ModelSelect2(
+        widget=autocomplete.ModelSelect2Widget(  # Nome correto
             url='user-autocomplete',
             attrs={'data-html': True}
         ),
