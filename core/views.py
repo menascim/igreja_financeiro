@@ -1,3 +1,4 @@
+from dal import autocomplete
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import TemplateView
@@ -146,3 +147,13 @@ def Register(request):
             send_whatsapp_notification(user.phone, mensagem)
             
             return redirect('profile')  # Redirecionamento correto
+
+class UserAutocomplete(autocomplete.Select2QuerySetView):
+    def get_queryset(self):
+        qs = CustomUser.objects.all()
+        if self.q:
+            qs = qs.filter(
+                Q(first_name__icontains=self.q) | 
+                Q(phone__icontains=self.q)
+            )
+        return qs
