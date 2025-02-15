@@ -3,8 +3,18 @@ from django import forms
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.core.validators import EmailValidator
 from .models import Contribution, CustomUser
-from dal import autocomplete
 from dal_select2 import widgets
+from django.utils import timezone
+
+def profile(request):
+    if request.method == 'POST':
+        form = ContributionForm(request.POST)
+        if form.is_valid():
+            contribution = form.save(commit=False)
+            contribution.user = request.user
+            contribution.data = timezone.now().date()  # Define a data atual
+            contribution.save()
+            return redirect('profile')
 
 class LoginForm(AuthenticationForm):
     username = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}))
@@ -26,7 +36,7 @@ class RegistrationForm(UserCreationForm):
 class ContributionForm(forms.ModelForm):
     user = forms.ModelChoiceField(
         queryset=CustomUser.objects.all(),
-        widget=widgets.ModelSelect2(  # Nome simplificado
+        widget=widgets.ModelSelect2(
             url='user-autocomplete',
             attrs={'data-html': True}
         ),
@@ -41,10 +51,12 @@ class ContributionForm(forms.ModelForm):
 
     class Meta:
         model = Contribution
-        fields = ['user', 'valor', 'metodo', 'data']
+        fields = ['user', 'valor', 'metodo']  # Campo 'data' removido
         widgets = {
-            'valor': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.01'}),
-            'data': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'})
+            'valor': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'step': '0.01'
+            })
         }
 
     def __init__(self, *args, **kwargs):
