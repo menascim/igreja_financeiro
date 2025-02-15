@@ -4,6 +4,7 @@ from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.core.validators import EmailValidator
 from .models import Contribution, CustomUser
 from dal import autocomplete
+from dal_select2.widgets import ModelSelect2Widget
 
 class LoginForm(AuthenticationForm):
     username = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}))
