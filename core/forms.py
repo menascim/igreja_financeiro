@@ -40,7 +40,7 @@ class ContributionForm(forms.ModelForm):
         )
     )
 
-         def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         is_admin = kwargs.pop('is_admin', False)
         super().__init__(*args, **kwargs)
 
