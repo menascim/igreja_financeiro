@@ -15,6 +15,10 @@ class CustomUser(AbstractUser):
         ],
         error_messages={'unique': 'Este telefone já está registrado!'}
     )
+    class Meta:
+        permissions = [
+            ("pode_registrar_contribuicao", "Pode registrar contribuições para outros membros"),
+        ]
 class Contribution(models.Model):
     user = models.ForeignKey(
         CustomUser, 
