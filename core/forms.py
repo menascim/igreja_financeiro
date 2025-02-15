@@ -4,7 +4,7 @@ from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.core.validators import EmailValidator
 from .models import Contribution, CustomUser
 from dal import autocomplete
-from dal_select2.widgets import ModelSelect2Widget
+from dal_select2 import widgets
 
 class LoginForm(AuthenticationForm):
     username = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}))
@@ -26,7 +26,7 @@ class RegistrationForm(UserCreationForm):
 class ContributionForm(forms.ModelForm):
     user = forms.ModelChoiceField(
         queryset=CustomUser.objects.all(),
-        widget=ModelSelect2Widget(  # Nome simplificado
+        widget=widgets.ModelSelect2(  # Nome simplificado
             url='user-autocomplete',
             attrs={'data-html': True}
         ),
