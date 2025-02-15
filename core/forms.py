@@ -33,7 +33,17 @@ class RegistrationForm(UserCreationForm):
 class ContributionForm(forms.ModelForm):
     class Meta:
         model = Contribution
-        fields = ['valor', 'metodo']
+        fields = ['user', 'valor', 'metodo']
+
+         def __init__(self, *args, **kwargs):
+        is_admin = kwargs.pop('is_admin', False)
+        super().__init__(*args, **kwargs)
+
+        if not is_admin:
+            del self.fields['user']  # Esconde o campo para não-admins
+        else:
+            self.fields['user'].queryset = CustomUser.objects.filter(is_staff=False)
+            
         widgets = {
             'metodo': forms.Select(attrs={'class': 'form-control'}),
             'valor': forms.NumberInput(attrs={
