@@ -74,12 +74,22 @@ def profile(request):
 # views.py (trecho atualizado)
 @login_required
 def add_contribution(request):
+    is_admin = request.user.is_staff
+    
     if request.method == 'POST':
-        form = ContributionForm(request.POST)
+        form = ContributionForm(request.POST, is_admin=is_admin)
         if form.is_valid():
             contribution = form.save(commit=False)
-            contribution.user = request.user
+            
+            if not is_admin:
+                contribution.user = request.user  # Usuário normal: vincula a si mesmo
+                
             contribution.save()
+            return redirect('profile')
+    else:
+        form = ContributionForm(is_admin=is_admin)
+    
+    return render(request, 'admin/add_contribution.html', {'form': form})
             
             # Envia WhatsApp
             try:
