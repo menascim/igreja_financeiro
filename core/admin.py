@@ -11,7 +11,6 @@ class CustomUserAdmin(UserAdmin):
         (None, {'fields': ('username', 'password')}),
         ('Informações Pessoais', {'fields': ('phone', 'email')}),
         ('Permissões', {'fields': ('is_active', 'is_staff', 'is_superuser')}),
-        list_display = ('username', 'email', 'phone', 'is_staff'),
     )
 
 admin.site.register(CustomUser, CustomUserAdmin)
