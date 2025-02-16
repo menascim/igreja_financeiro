@@ -87,33 +87,38 @@ def profile(request):
         'form': form
     })
 
+# No arquivo views.py, atualize a view add_contribution:
 @login_required
 def add_contribution(request):
-    is_admin = request.user.is_staff
+    try:
+        if request.method == 'POST':
+            form = ContributionForm(request.POST, is_admin=request.user.is_staff)
+            if form.is_valid():
+                contribution = form.save(commit=False)
+                
+                if not request.user.is_staff:
+                    contribution.user = request.user
+                
+                contribution.save()
+                
+                # Adicione tratamento de erros para o WhatsApp
+                try:
+                    send_whatsapp_confirmation(
+                        request.user.phone,
+                        contribution.valor
+                    )
+                except Exception as e:
+                    messages.warning(request, f"Contribuição salva, mas erro no WhatsApp: {str(e)}")
+                
+                return redirect('profile')
+        else:
+            form = ContributionForm(is_admin=request.user.is_staff)
+        
+        return render(request, 'admin/add_contribution.html', {'form': form})
     
-    if request.method == 'POST':
-        form = ContributionForm(request.POST, is_admin=is_admin)
-        if form.is_valid():
-            contribution = form.save(commit=False)
-            
-            if not is_admin:
-                contribution.user = request.user
-            
-            contribution.save()
-            
-            try:
-                send_whatsapp_confirmation(
-                    request.user.phone.replace("+55", ""),
-                    contribution.amount  # Alterado de 'valor' para 'amount'
-                )
-            except Exception as e:
-                print(f"Erro fora do Twilio: {str(e)}")
-            
-            return redirect('profile')
-    else:
-        form = ContributionForm(is_admin=is_admin)
-    
-    return render(request, 'admin/add_contribution.html', {'form': form})
+    except Exception as e:
+        messages.error(request, f"Erro crítico: {str(e)}")
+        return redirect('profile')
 
 @login_required
 def export_contributions(request):
