@@ -4,18 +4,17 @@ from django.contrib.auth.admin import UserAdmin
 from .models import CustomUser
 from .models import Contribution
 
+
+@admin.register(CustomUser)
 class CustomUserAdmin(UserAdmin):
     fieldsets = (
         (None, {'fields': ('username', 'password')}),
         ('Informações Pessoais', {'fields': ('phone', 'email')}),
         ('Permissões', {'fields': ('is_active', 'is_staff', 'is_superuser')}),
+        list_display = ('username', 'email', 'phone', 'is_staff'),
     )
 
 admin.site.register(CustomUser, CustomUserAdmin)
-
-@admin.register(CustomUser)
-class CustomUserAdmin(admin.ModelAdmin):
-    list_display = ('username', 'email', 'phone', 'is_staff')
 
 @admin.register(Contribution)
 class ContributionAdmin(admin.ModelAdmin):
