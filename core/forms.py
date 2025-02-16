@@ -41,6 +41,7 @@ class ContributionForm(forms.ModelForm):
             attrs={'data-html': True}
         ),
         required=False
+        label="Membro Destinatário"  # Novo label
     )
 
     metodo = forms.ChoiceField(
@@ -67,3 +68,6 @@ class ContributionForm(forms.ModelForm):
             del self.fields['user']
         else:
             self.fields['user'].queryset = CustomUser.objects.filter(is_staff=False)
+            self.fields['user'].required = True
+             else:
+            del self.fields['user']
