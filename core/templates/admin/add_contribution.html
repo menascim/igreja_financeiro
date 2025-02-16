@@ -1,29 +1,32 @@
-<!-- templates/admin/add_contribution.html -->
+<!-- 3. Atualize o template admin/add_contribution.html -->
 {% extends 'base.html' %}
+{% load static %}
 
 {% block content %}
-<div class="container py-5">
-    <h2><i class="fas fa-plus-circle me-2"></i>Registrar Contribuição</h2>
-    
-    <div class="card mt-4">
-        <div class="card-body">
-            <form method="post">
-                {% csrf_token %}
-                
-                <!-- Campo de Busca Dinâmica -->
-                <div class="mb-4">
-                    <label class="form-label fw-bold">Selecionar Membro</label>
-                    {{ form.user }}
-                </div>
-
-                <!-- Outros campos -->
-                {{ form.as_p }}
-
-                <button type="submit" class="btn btn-primary">
-                    <i class="fas fa-save me-2"></i>Salvar
-                </button>
-            </form>
+<div class="container mt-4">
+    <h2>Adicionar Contribuição</h2>
+    <form method="post">
+        {% csrf_token %}
+        
+        <!-- Campo user visível apenas para admins -->
+        {% if is_admin %}
+            <div class="mb-3">
+                <label class="form-label">{{ form.user.label }}</label>
+                {{ form.user }}
+            </div>
+        {% endif %}
+        
+        <div class="mb-3">
+            <label class="form-label">Valor</label>
+            {{ form.valor }}
         </div>
-    </div>
+        
+        <div class="mb-3">
+            <label class="form-label">Método de Pagamento</label>
+            {{ form.metodo }}
+        </div>
+        
+        <button type="submit" class="btn btn-primary">Salvar Contribuição</button>
+    </form>
 </div>
 {% endblock %}
