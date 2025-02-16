@@ -97,7 +97,7 @@ def add_contribution(request):
             if form.is_valid():
                 contribution = form.save(commit=False)
 
-                if not is_admin:
+            if not is_admin:
                 contribution.user = request.user
                 
                 if not request.user.is_staff:
