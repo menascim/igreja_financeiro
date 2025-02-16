@@ -17,4 +17,5 @@ admin.site.register(CustomUser, CustomUserAdmin)
 @admin.register(Contribution)
 class ContributionAdmin(admin.ModelAdmin):
     list_display = ('user', 'valor', 'metodo', 'data')
-    search_fields = ('user__username',)
+    list_filter = ('user', 'metodo')
+    search_fields = ('user__username', 'user__phone')
