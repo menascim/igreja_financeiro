@@ -90,11 +90,15 @@ def profile(request):
 # No arquivo views.py, atualize a view add_contribution:
 @login_required
 def add_contribution(request):
+    is_admin = request.user.is_staff
     try:
         if request.method == 'POST':
-            form = ContributionForm(request.POST, is_admin=request.user.is_staff)
+            form = ContributionForm(request.POST, is_admin=is_admin)
             if form.is_valid():
                 contribution = form.save(commit=False)
+
+                if not is_admin:
+                contribution.user = request.user
                 
                 if not request.user.is_staff:
                     contribution.user = request.user
@@ -103,22 +107,22 @@ def add_contribution(request):
                 
                 # Adicione tratamento de erros para o WhatsApp
                 try:
-                    send_whatsapp_confirmation(
-                        request.user.phone,
-                        contribution.valor
-                    )
-                except Exception as e:
-                    messages.warning(request, f"Contribuição salva, mas erro no WhatsApp: {str(e)}")
-                
-                return redirect('profile')
-        else:
-            form = ContributionForm(is_admin=request.user.is_staff)
-        
-        return render(request, 'admin/add_contribution.html', {'form': form})
+                target_user = contribution.user if is_admin else request.user
+                send_whatsapp_confirmation(
+                    target_user.phone.replace("+55", ""),
+                    contribution.valor
+                )
+            except Exception as e:
+                messages.warning(request, f"Contribuição salva, mas erro no WhatsApp: {str(e)}")
+            
+            return redirect('profile')
+    else:
+        form = ContributionForm(is_admin=is_admin)
     
-    except Exception as e:
-        messages.error(request, f"Erro crítico: {str(e)}")
-        return redirect('profile')
+    return render(request, 'admin/add_contribution.html', {
+        'form': form,
+        'is_admin': is_admin  # Passa contexto para o template
+    })
 
 @login_required
 def export_contributions(request):
