@@ -8,8 +8,9 @@ from django.db import IntegrityError
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
+from django.utils import timezone
 from .forms import RegistrationForm, LoginForm, ContributionForm
-from .models import Contribution, CustomUser  # Adicionei o CustomUser import
+from .models import Contribution, CustomUser
 from .services import send_whatsapp_notification
 import pandas as pd
 from twilio.rest import Client
@@ -32,7 +33,6 @@ def register(request):
             user.first_name = form.cleaned_data.get('first_name', '')
             user.save()
             
-            # Mensagem de boas-vindas
             mensagem = (
                 f"🎉 Cadastro realizado com sucesso!\n"
                 f"Nome: {user.first_name}\n"
@@ -64,49 +64,49 @@ def login_view(request):
 
 @login_required
 def profile(request):
+    contributions = Contribution.objects.filter(user=request.user).order_by('-data')
+    
     if request.method == 'POST':
         form = ContributionForm(request.POST)
         if form.is_valid():
             contribution = form.save(commit=False)
             contribution.user = request.user
-            contribution.data = timezone.now().date()  # Adicione a data automaticamente
+            contribution.data = timezone.now().date()
             contribution.save()
-            return redirect('profile')
+            
             try:
                 send_whatsapp_confirmation(
                     request.user.phone.replace("+55", ""),
-                    contribution.amount  # Alterado de 'valor' para 'amount'
+                    contribution.valor
                 )
             except Exception as e:
                 print(f"Erro ao enviar WhatsApp: {str(e)}")
+            
             return redirect('profile')
+    
     else:
         form = ContributionForm()
+    
     return render(request, 'profile.html', {
         'contributions': contributions,
         'form': form
     })
 
-# No arquivo views.py, atualize a view add_contribution:
 @login_required
 def add_contribution(request):
     is_admin = request.user.is_staff
-    try:
-        if request.method == 'POST':
-            form = ContributionForm(request.POST, is_admin=is_admin)
-            if form.is_valid():
-                contribution = form.save(commit=False)
-
+    
+    if request.method == 'POST':
+        form = ContributionForm(request.POST, is_admin=is_admin)
+        if form.is_valid():
+            contribution = form.save(commit=False)
+            
             if not is_admin:
                 contribution.user = request.user
-                
-                if not request.user.is_staff:
-                    contribution.user = request.user
-                
-                contribution.save()
-                
-                # Adicione tratamento de erros para o WhatsApp
-                try:
+            
+            contribution.save()
+            
+            try:
                 target_user = contribution.user if is_admin else request.user
                 send_whatsapp_confirmation(
                     target_user.phone.replace("+55", ""),
@@ -121,13 +121,13 @@ def add_contribution(request):
     
     return render(request, 'admin/add_contribution.html', {
         'form': form,
-        'is_admin': is_admin  # Passa contexto para o template
+        'is_admin': is_admin
     })
 
 @login_required
 def export_contributions(request):
     contributions = Contribution.objects.filter(user=request.user)
-    df = pd.DataFrame(list(contributions.values('amount', 'date', 'payment_method')))
+    df = pd.DataFrame(list(contributions.values('valor', 'data', 'metodo')))
     response = HttpResponse(content_type='application/ms-excel')
     response['Content-Disposition'] = 'attachment; filename="contribuicoes.xlsx"'
     df.to_excel(response, index=False)
@@ -140,7 +140,7 @@ def send_whatsapp_confirmation(phone, valor):
     try:
         client = Client(account_sid, auth_token)
         message = client.messages.create(
-            body=f"✅ Recebemos sua contribuição, Financeiro Piber! Valor: R$ {valor}",
+            body=f"✅ Recebemos sua contribuição! Valor: R$ {valor}",
             from_='whatsapp:+14155238886',
             to=f'whatsapp:+55{phone}'
         )
@@ -149,7 +149,7 @@ def send_whatsapp_confirmation(phone, valor):
         print(f"Erro ao enviar WhatsApp: {str(e)}")
 
 class UserAutocomplete(Select2QuerySetView):
-   def get_queryset(self):
+    def get_queryset(self):
         qs = CustomUser.objects.all()
         if self.q:
             qs = qs.filter(
