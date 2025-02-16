@@ -13,9 +13,11 @@ class CustomUserAdmin(UserAdmin):
 
 admin.site.register(CustomUser, CustomUserAdmin)
 
+@admin.register(CustomUser)
+class CustomUserAdmin(admin.ModelAdmin):
+    list_display = ('username', 'email', 'phone', 'is_staff')
+
 @admin.register(Contribution)
 class ContributionAdmin(admin.ModelAdmin):
     list_display = ('user', 'valor', 'metodo', 'data')
-    search_fields = ['user__first_name', 'user__phone']
-    list_filter = ('metodo', 'data')
-
+    search_fields = ('user__username',)
