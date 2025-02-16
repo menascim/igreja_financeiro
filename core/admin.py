@@ -5,7 +5,6 @@ from .models import CustomUser
 from .models import Contribution
 
 
-@admin.register(CustomUser)
 class CustomUserAdmin(UserAdmin):
     fieldsets = (
         (None, {'fields': ('username', 'password')}),
